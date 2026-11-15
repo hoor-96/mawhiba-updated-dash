@@ -256,7 +256,7 @@ Promise.all(keys.map(function(k){return fetch(PUB+'?gid='+TABS[k]+'&single=true&
       </div>
       <div class="stamp" id="stamp"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>آخر تحديث للبيانات: <b class="num" data-draw="stamp" data-source="indicators" data-field="report_date" data-where="program=التميز" data-fetchpriority="high">—</b></div>
     </div>
-    <div class="tabs" role="tablist" id="tabs"><button class="tab" role="tab" data-id="npg" aria-selected="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>الكشف عن الموهوبين</button><button class="tab" role="tab" data-id="bebras" aria-selected="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>بيبراس</button><button class="tab" role="tab" data-id="m360" aria-selected="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg>موهبة 360</button><button class="tab" role="tab" data-id="tamayuz" aria-selected="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>التميز</button></div>
+    <div class="tabs" role="tablist" id="tabs"><button class="tab" role="tab" data-id="npg" aria-selected="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>الكشف عن الموهوبين</button><button class="tab" role="tab" data-id="bebras" aria-selected="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>بيبراس</button><button class="tab" role="tab" data-id="m360" aria-selected="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg>موهبة 360</button><button class="tab" role="tab" data-id="davi" aria-selected="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7 15h10"/></svg>داڤي DaVi</button><button class="tab" role="tab" data-id="tamayuz" aria-selected="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>التميز</button></div>
   </header>
   <main id="view" data-draw="view" data-source="indicators funnel daily clicks geo audience goals content">—</main>
   
@@ -284,7 +284,7 @@ dash.loader('indicators', {
       if (/^-?\d+(\.\d+)?$/.test(c)) return Number(c);
       return t;
     };
-    const progs = v[0].slice(2, 6);
+    const progs = v[0].slice(2, 7).filter(Boolean);
     const codes = v.slice(1).map((r) => r[0]).filter(Boolean);
     const rows = progs.map((p, i) => {
       const r = { program: p };
@@ -666,15 +666,15 @@ function content(p){
 function driveId(u){var m=String(u).match(/\/d\/([\w-]{10,})/)||String(u).match(/[?&]id=([\w-]{10,})/);return m?m[1]:null}
 function MEDIA(){var P=window.__curPost,m=P&&P.media;if(m){var out=[];String(m).split(/\s*;\s*/).forEach(function(x){x=x.trim();if(!x)return;var vid=/^فيديو\s*:/.test(x);x=x.replace(/^فيديو\s*:\s*/,'');var id=driveId(x);if(id)out.push(vid?{f:'https://drive.google.com/file/d/'+id+'/preview'}:'https://drive.google.com/thumbnail?id='+id+'&sz=w1600');else if(/\.(png|jpe?g|gif|webp)(\?|$)/i.test(x))out.push(x)});if(out.length)return out}return POST_IMG[cur]||[]}
 var POST_IMG={tamayuz:['/_blob/99f9128be0911cdd491865d200abe135','/_blob/03a8f8bdd240ad237392949b11413668','/_blob/9b4f50d749d06cecfb8ec6c6f5122d07','/_blob/c3604cf880bff1ae380f0c3827365d0c'],npg:['/_blob/0f97f6b3dc3b9018b9f85febd0ddb48d'],bebras:[{v:'/_blob/4a9418a2d9a0d4e84f159fe543076dbf',poster:'/_blob/189a56c1cb3fd5833329d44e516cf374'}]};
-var KEYS={tamayuz:'التميز',npg:'الكشف عن الموهوبين',bebras:'بيبراس',m360:'موهبة 360'};
-var ICON_OF={tamayuz:'cap',npg:'sparkle',bebras:'code',m360:'bulb'};
+var KEYS={tamayuz:'التميز',npg:'الكشف عن الموهوبين',bebras:'بيبراس',m360:'موهبة 360',davi:'داڤي DaVi'};
+var ICON_OF={tamayuz:'cap',npg:'sparkle',bebras:'code',m360:'bulb',davi:'file'};
 var REG_DEFS=[['حفظوا النموذج ولم يرسلوه','saved_not_submitted','file','c-gold'],['مؤكد الدفع','paid_confirmed','card','c-teal'],['المقاعد المدعومة','supported_seats','flag','c-purple'],['التسجيل المدعوم','supported_registration','check','c-teal'],['المسجلون عن بعد','remote_registered','globe','c-gold'],['المدارس المشاركة','participating_schools','school','c-purple'],['الإدارات التعليمية','education_departments','map','c-teal'],['البرامج تحت المظلة','programs_count','flag','c-purple']];
 function rowsFor(id,prog){var d=dash.data(id);return d.status==='ok'&&Array.isArray(d.data)?d.data.filter(function(r){return r.program===prog}):[]}
 function firstLink(s){return s==null?'':String(s).split(';')[0].trim()}
 function buildData(){
   var ind=dash.data('indicators'),irows=ind.status==='ok'?ind.data:[];
   var rep=null;irows.forEach(function(r){if(!rep&&r.report_date)rep=r.report_date});
-  var out={reportDate:rep||'',order:['npg','bebras','m360','tamayuz'],programs:{}};
+  var out={reportDate:rep||'',order:['npg','bebras','m360','davi','tamayuz'],programs:{}};
   out.order.forEach(function(key){
     var P=KEYS[key],r=irows.filter(function(x){return x.program===P})[0]||{};
     var p={tab:P,icon:ICON_OF[key],name:r.program_name||P,tagline:r.tagline||'',open:r.open_date||'',close:r.close_date||'',
@@ -716,7 +716,7 @@ function buildData(){
 }
 
 /* ---------- render ---------- */
-var TABK=['npg','bebras','m360','tamayuz'];
+var TABK=['npg','bebras','m360','davi','tamayuz'];
 function curKey(){var k=dash.params().program;return TABK.indexOf(k)>=0?k:'npg'}
 function render(el){
   cur=curKey();var p=DATA.programs[cur],t=timing(p);mounts=[];
