@@ -10,7 +10,17 @@ window.dash=(function(){
  function data(id){if(!ready)return{status:'loading',data:[]};if(!(id in cache)){var l=loaders[id];var r=l?l.fn({answer:raw[id]}):raw[id];cache[id]=r&&r.rows?Object.assign(r.rows.slice(),{columns:r.columns}):r}
   var d=cache[id];return{status:'ok',data:d,columns:d&&d.columns,refreshing:false,truncated:false}}
  function run(){subs.forEach(function(f){try{f()}catch(e){console.error(e)}});draws.forEach(function(d){var el=document.getElementById(d[0])||document.querySelector('[data-draw="'+d[0]+'"]');if(el)try{d[1](el)}catch(e){console.error(e)}})}
- fetch('data.json?v='+Date.now()).then(function(r){return r.json()}).then(function(j){raw=j;ready=true;run()});
+ (function(){
+var PUB='https://docs.google.com/spreadsheets/d/e/2PACX-1vS1yQpUTfc-uJYGRb0qbtjw391cn4IzL-Zjpgo5f2g526wCVmRK8g-DWdmcvP1FtF1SDqX3svnXeCf9/pub';
+var TABS={indicators:0,funnel:6,daily:1,clicks:2,geo:3,audience:4,goals:8,content:5};
+function csv(t){var rows=[],row=[],f='',q=false,i,c;for(i=0;i<t.length;i++){c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==','){row.push(f);f=''}else if(c=='\n'||c=='\r'){if(c=='\r'&&t[i+1]=='\n')i++;row.push(f);rows.push(row);row=[];f=''}else f+=c}if(f!==''||row.length){row.push(f);rows.push(row)}
+rows=rows.map(function(r){while(r.length&&r[r.length-1]==='')r.pop();return r});while(rows.length&&!rows[rows.length-1].length)rows.pop();return rows}
+function fallback(){fetch('data.json?v='+Date.now()).then(function(r){return r.json()}).then(function(j){raw=j;ready=true;run()})}
+var keys=Object.keys(TABS);
+Promise.all(keys.map(function(k){return fetch(PUB+'?gid='+TABS[k]+'&single=true&output=csv&t='+Date.now()).then(function(r){if(!r.ok)throw r.status;return r.text()}).then(function(t){if(/^\s*</.test(t))throw 'html';return csv(t)})}))
+.then(function(all){var j={};keys.forEach(function(k,i){j[k]={values:all[i]}});if(!all[0].length)throw 'empty';raw=j;ready=true;run()})
+.catch(function(e){console.warn('sheet load failed, using data.json',e);fallback()});
+})();
  var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(run,150)});
  window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(h&&h!==params.program){params.program=h;run()}});
  return{loader:function(id,o){loaders[id]=o},data:data,draw:function(n,f){draws.push([n,f]);if(ready)run()},onData:function(f){subs.push(f);f()},
