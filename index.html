@@ -643,6 +643,23 @@ function analysis(p,t){
     +p.audience.map(function(r){return '<tr><td><span class="pill'+(r[0].indexOf('الثانوي')>=0?' sec2':'')+'">'+esc(r[0])+'</span></td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td><b class="num">'+(r[3]||'—')+'</b></td><td style="color:var(--ink2);font-size:12.5px">'+esc(r[4])+'</td></tr>'}).join('')+'</tbody></table></div></section>'}
   return h+'</div>'
 }
+function fwSection(p){
+  var f=p.fw;if(!f)return '';
+  var h='<div class="sec"><h3 class="sec-h">'+esc(f.name)+'</h3>';
+  if(f.goal){var g=f.goal,v=(g[4]!=null&&g[3])?g[4]/g[3]*100:null;
+    h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:16px;align-items:start">'
+      +'<section class="card"><div class="ctitle"><span class="ic">'+ic('target')+'</span>المستهدف</div><b class="num" style="font-size:28px">'+fmt(g[3])+'</b><p class="sub">فترة التسجيل: '+esc(g[2]||'—')+'</p></section>'
+      +'<section class="card"><div class="ctitle"><span class="ic">'+ic('users')+'</span>المسجلون</div><b class="num" style="font-size:28px">'+(g[4]==null?'—':fmt(g[4]))+'</b><p class="sub">'+(g[1]?esc(g[1]):'المقاعد المعتمدة')+'</p></section>'
+      +'<section class="card"><div class="ctitle"><span class="ic">'+ic('trend')+'</span>نسبة الإنجاز</div><b class="num" style="font-size:28px">'+(v==null?'—':v.toFixed(1)+'%')+'</b><span style="display:block;margin-top:10px;height:8px;border-radius:99px;background:#ECEAF6;overflow:hidden"><span style="display:block;margin-left:auto;height:100%;width:'+Math.min(100,v||0)+'%;background:linear-gradient(270deg,#205BC3,#7A5DF5)"></span></span></section></div>'}
+  if(f.inf.length){var tot=sum(f.inf.map(function(r){return r[1]||0}));
+    h+='<section class="card" style="margin-bottom:16px"><div class="ctitle"><span class="ic">'+ic('users')+'</span>المؤثرون</div><p class="sub">نقرات رابط كل مؤثر من Bitly، وحصته من إجمالي نقرات المؤثرين.</p><div style="overflow-x:auto"><table><thead><tr><th>المؤثر</th><th>الرابط</th><th>النقرات</th><th>الحصة</th></tr></thead><tbody>'
+     +f.inf.map(function(r){return '<tr><td><b>'+esc(r[0])+'</b></td><td>'+(r[2]?'<a class="link" href="'+esc(r[2])+'" target="_blank" rel="noopener">'+esc(r[2].replace('https://',''))+'</a>':'—')+'</td><td><b class="num">'+(r[1]==null?'—':fmt(r[1]))+'</b></td><td>'+(r[1]==null||!tot?'—':pct(r[1],tot).toFixed(1)+'%')+'</td></tr>'}).join('')
+     +'<tr><td><b>الإجمالي</b></td><td></td><td><b class="num">'+fmt(tot)+'</b></td><td></td></tr></tbody></table></div></section>'}
+  if(f.sms.length){h+='<section class="card"><div class="ctitle"><span class="ic">'+ic('mail')+'</span>الرسائل النصية</div><div style="overflow-x:auto"><table><thead><tr><th>الرسالة</th><th>الفئة المستهدفة</th><th>عدد الأرقام</th><th>النقرات</th></tr></thead><tbody>'
+     +f.sms.map(function(s){return '<tr><td style="max-width:420px;white-space:pre-line">'+esc(s.text)+(s.link?'<div style="margin-top:4px"><a class="link" href="'+esc(s.link)+'" target="_blank" rel="noopener">'+esc(s.link.replace('https://',''))+'</a></div>':'')+'</td><td>'+esc(s.audience||'—')+'</td><td><b class="num">'+(s.numbers==null?'—':fmt(s.numbers))+'</b></td><td><b class="num">'+(s.clicks==null?'—':fmt(s.clicks))+'</b></td></tr>'}).join('')
+     +'</tbody></table></div></section>'}
+  return h+'</div>'
+}
 function capt(t){var s=String(t||'').replace(/\r/g,'').replace(/[ \t\u00a0]+\n/g,'\n').replace(/\n[ \t\u00a0]+/g,'\n').trim();
   return s.split(/\n\s*\n+/).map(function(par){return '<p>'+esc(par.trim()).replace(/\n+/g,'<br>')+'</p>'}).join('')}
 function content(p){
@@ -706,6 +723,11 @@ function buildData(){
       p.goalsKpi=gl.filter(function(g){return g.kind==='مؤشر أداء'}).map(function(g){return [g.item,g.target||'—',g.method||'']});
       p.goalsPrograms=gl.filter(function(g){return g.kind!=='مؤشر أداء'}).map(function(g){var n=Number(String(g.target||'').replace(/,/g,''));var a=Number(String(g.actual==null?'':g.actual).replace(/,/g,''));return [g.item,g.target_group||'',g.period||'',isNaN(n)?null:n,(g.actual==null||String(g.actual).trim()===''||isNaN(a))?null:a]});
     }
+    if(key==='m360'){var FW='Fitzwilliam College Online Program',fg=null;
+      if(p.goalsPrograms){var gi=-1;p.goalsPrograms.forEach(function(r,i){if(r[0]===FW)gi=i});if(gi>=0){fg=p.goalsPrograms[gi];p.goalsPrograms.splice(gi,1)}}
+      var fi=rowsFor('clicks',FW).map(function(c){return [c.channel,c.clicks,firstLink(c.links)]}).sort(function(a,b){return (b[1]||0)-(a[1]||0)});
+      var fs=rowsFor('content',FW).filter(function(c){return c.type==='رسالة نصية'}).map(function(c){return {text:c.text||'',link:firstLink(c.link),audience:c.target_group||'',numbers:c.numbers,clicks:c.clicks}});
+      p.fw=(fg||fi.length||fs.length)?{name:FW,goal:fg,inf:fi,sms:fs}:null}
     var cs=rowsFor('content',P);
     var sms=cs.filter(function(c){return c.type==='رسالة نصية'}).pop(),post=cs.filter(function(c){return c.type==='منشور سوشل ميديا'}).pop();
     p.sms=sms?{text:sms.text||'',link:firstLink(sms.link),audience:sms.target_group||'',numbers:sms.numbers,clicks:sms.clicks}:null;
@@ -720,7 +742,7 @@ var TABK=['npg','bebras','m360','davi','tamayuz'];
 function curKey(){var k=dash.params().program;return TABK.indexOf(k)>=0?k:'npg'}
 function render(el){
   cur=curKey();var p=DATA.programs[cur],t=timing(p);mounts=[];
-  var h='<div class="row2">'+programCard(p,t)+progressCard(p,t)+'</div>'+goals(p)+highlights(p)+funnel(p)+reach(p)+analysis(p,t)+content(p);
+  var h='<div class="row2">'+programCard(p,t)+progressCard(p,t)+'</div>'+goals(p)+highlights(p)+funnel(p)+reach(p)+analysis(p,t)+fwSection(p)+content(p);
   el.innerHTML=h+'<div id="tip" hidden></div>';tip=el.querySelector('#tip');mounts.forEach(function(f){f()})
 }
 document.querySelectorAll('.mwx .tab').forEach(function(b){b.addEventListener('click',function(){dash.setParams({program:b.dataset.id});dash.setLink(b.dataset.id)})});
