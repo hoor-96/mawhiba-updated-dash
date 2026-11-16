@@ -717,7 +717,7 @@ function buildData(){
     if(p.daily&&p.daily.type==='cumulative'&&!p.daily.saved)delete p.daily.saved;
     p.clicks=rowsFor('clicks',P).filter(function(c){return c.clicks!=null}).sort(function(a,b){return b.clicks-a.clicks}).map(function(c){return [c.channel,c.clicks]});
     p.geo=rowsFor('geo',P).filter(function(g){return g.registered!=null&&g.lon!=null&&g.lat!=null}).sort(function(a,b){return b.registered-a.registered}).map(function(g){return [g.region,g.registered,g.lon,g.lat]});
-    p.audience=rowsFor('audience',P).map(function(a){return [a.audience_type||'',a.category||'',a.segment||'',a.count==null?'':fmt(a.count),a.note||'']});
+    p.audience=key==='m360'?[]:rowsFor('audience',P).map(function(a){return [a.audience_type||'',a.category||'',a.segment||'',a.count==null?'':fmt(a.count),a.note||'']});
     var gl=rowsFor('goals',P);
     if(gl.length){
       p.goalsKpi=gl.filter(function(g){return g.kind==='مؤشر أداء'}).map(function(g){return [g.item,g.target||'—',g.method||'']});
