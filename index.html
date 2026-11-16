@@ -564,7 +564,8 @@ function reach(p){
    +stat('نسبة النقر CTR (نقرات السوشل ميديا ÷ الترويج الرقمي)',ctr,'trend','c-purple')
    +stat('معدل التحويل (المسجلون ÷ زيارات صفحة البرنامج)',cr,'target','c-gold')+'</div>';
   if(p.note)h+='<div class="callout info">'+ic('bulb')+'<span>'+esc(p.note)+'</span></div>';
-  h+='</div><div class="sec"><h3 class="sec-h">مؤشرات التسجيل</h3><div class="stats">'+p.regStats.map(function(s){return stat(s[0],fmt(s[1]),s[2],s[3])}).join('')+'</div></div>';
+  h+='</div>';if(cur==='m360')return h;
+  h+='<div class="sec"><h3 class="sec-h">مؤشرات التسجيل</h3><div class="stats">'+p.regStats.map(function(s){return stat(s[0],fmt(s[1]),s[2],s[3])}).join('')+'</div></div>';
   h+='<div class="sec"><h3 class="sec-h">الجمهور المستهدف</h3><div class="stats">'+p.audienceStats.map(function(s){return stat(s[0],s[1],s[2],'c-purple')}).join('')+'</div></div>';
   return h
 }
