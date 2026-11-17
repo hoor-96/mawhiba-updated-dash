@@ -739,7 +739,9 @@ function buildData(){
       p.fw=(fg||fi.length||fs.length||fk.visits!=null||fk.smsNumbers!=null)?{name:FW,goal:fg,inf:fi,sms:fs,k:fk}:null}
     var cs=rowsFor('content',P);
     var sms=cs.filter(function(c){return c.type==='رسالة نصية'}).pop(),post=cs.filter(function(c){return c.type==='منشور سوشل ميديا'}).pop();
-    p.smsList=key==='m360'?cs.filter(function(c){return c.type==='رسالة نصية'}).map(function(c){return {sub:c.subprogram||'',text:c.text||'',link:firstLink(c.link),audience:c.target_group||'',numbers:c.numbers,clicks:c.clicks}}):null;
+    var TOP=Object.keys(KEYS).map(function(k){return KEYS[k]}).concat(['Fitzwilliam College Online Program']);
+    var csAll=(function(){var d=dash.data('content');return d.status==='ok'&&Array.isArray(d.data)?d.data:[]})();
+    p.smsList=key==='m360'?csAll.filter(function(c){return c.type==='رسالة نصية'&&(c.program===P||TOP.indexOf(String(c.program).trim())<0)}).map(function(c){var pr=String(c.program).trim();return {sub:c.subprogram||(pr!==P?pr:''),text:c.text||'',link:firstLink(c.link),audience:c.target_group||'',numbers:c.numbers,clicks:c.clicks}}):null;
     p.sms=sms?{text:sms.text||'',link:firstLink(sms.link),audience:sms.target_group||'',numbers:sms.numbers,clicks:sms.clicks}:null;
     p.post=post?{text:post.text||'',link:firstLink(post.link),impressions:post.impressions,clicks:post.clicks,engagement:post.engagement,media:post.media||'',art:p.tagline}:null;
     out.programs[key]=p;
