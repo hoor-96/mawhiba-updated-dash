@@ -384,7 +384,7 @@ dash.loader('content', { description: 'صفوف تبويب المحتوى الم
     const a = typeof answer === 'string' ? JSON.parse(answer) : answer;
     const v = (a && a.values) || [];
     if (!v.length) throw new Error('Google Sheets returned no values for ' + ((a && a.range) || 'the range'));
-    const names = ['program', 'type', 'text', 'link', 'target_group', 'numbers', 'impressions', 'clicks', 'engagement', 'media'];
+    const names = ['program', 'type', 'text', 'link', 'target_group', 'numbers', 'impressions', 'clicks', 'engagement', 'media', 'subprogram'];
     const NUM = ['numbers', 'impressions', 'clicks', 'engagement'];
     const rows = v.slice(1).map((r, i) => {
       const o = { row: i + 2 };
@@ -535,7 +535,7 @@ function highlights(p){
   if(p.saved!=null)cards.push(['h-gold','file','فرصة استكمال',fmt(p.saved),'حفظوا نموذج التسجيل ولم يرسلوه بعد']);
   else{var best=null;if(p.daily&&p.daily.type==='daily'){p.daily.values.forEach(function(v,i){if(!best||v>best[0])best=[v,p.daily.dates[i]]})}
     cards.push(['h-gold','sparkle','أفضل يوم تسجيل',best?fmt(best[0]):'—',best?'مسجل في '+dayLabel(best[1]):'يظهر بعد إضافة الأرقام'])}
-  if(k.impressions==null&&k.organic!=null)cards.push(['h-navy','eye','الوصول العضوي',fmt(k.organic),'<span style="font-size:11px;opacity:.85">إحصائيات الوصول من حسابات موهبة الرئيسية والمؤثرين</span>']);else cards.push(['h-navy','eye','الرصد الإعلامي',fmt(k.impressions),k.smsNumbers!=null?'و<b>'+fmt(k.smsNumbers)+'</b> رقمًا وصلتهم الرسائل النصية':'يظهر بعد إضافة الأرقام']);
+  if(k.impressions==null&&k.organic!=null)cards.push(['h-navy','eye','الوصول العضوي',fmt(k.organic),'<span style="font-size:11px;opacity:.85">إحصائيات الوصول من حسابات موهبة الرئيسية والمؤثرين</span>']);else cards.push(['h-navy','eye','الرصد الإعلامي',fmt(k.impressions),(k.smsNumbers!=null&&cur!=='m360')?'و<b>'+fmt(k.smsNumbers)+'</b> رقمًا وصلتهم الرسائل النصية':(cur==='m360'?'':'يظهر بعد إضافة الأرقام')]);
   return '<div class="sec"><h3 class="sec-h">أبرز النقاط</h3><div class="hl">'+cards.map(function(c){return '<div class="hcard '+c[0]+'">'+PATTERN+'<div class="h"><span>'+ic(c[1])+'</span>'+c[2]+'</div><b class="num">'+c[3]+'</b><p>'+c[4]+'</p></div>'}).join('')+'</div></div>'
 }
 function funnel(p){
@@ -556,8 +556,8 @@ function reach(p){
    +stat('الرصد الإعلامي',k.impressions==null?null:fmt(k.impressions),'eye','c-navy')
    +(k.organic!=null?stat('الوصول العضوي<br><small style="font-size:10.5px;color:var(--muted);font-weight:400">من حسابات موهبة الرئيسية والمؤثرين</small>',fmt(k.organic),'users','c-teal'):'')
    +stat('الترويج الرقمي',k.digital==null?null:fmt(k.digital),'mega','c-purple')
-   +stat('إجمالي أرقام الرسائل النصية',k.smsNumbers==null?null:fmt(k.smsNumbers),'phone','c-navy')
-   +stat('عدد الرسائل النصية',k.smsCount==null?null:fmt(k.smsCount),'mail','c-purple')
+   +(cur==='m360'?'':stat('إجمالي أرقام الرسائل النصية',k.smsNumbers==null?null:fmt(k.smsNumbers),'phone','c-navy')
+   +stat('عدد الرسائل النصية',k.smsCount==null?null:fmt(k.smsCount),'mail','c-purple'))
    +stat('إجمالي النقرات على جميع الروابط',k.clicks==null?null:fmt(k.clicks),'click','c-teal')
    +stat('نقرات السوشل ميديا',k.social==null?null:fmt(k.social),'msg','c-purple')
    +stat('إجمالي زيارات صفحة البرنامج',k.pageVisits==null?null:fmt(k.pageVisits),'globe','c-navy')
@@ -679,9 +679,13 @@ function content(p){
     var x0=null;car.addEventListener('pointerdown',function(e){x0=e.clientX});
     car.addEventListener('pointerup',function(e){if(x0==null)return;var dx=e.clientX-x0;x0=null;if(Math.abs(dx)>40)go(dx<0?k+1:k-1)});
     car.addEventListener('pointercancel',function(){x0=null})});
+  if(p.smsList)p.sms=null;
   if(p.sms){var s=p.sms;h+='<section><div class="phone"><div class="notch"></div><h5>'+ic('mail')+'رسالة نصية</h5><div class="bubble">'+esc(s.text)+'<div style="margin-top:6px"><a class="link" href="'+esc(s.link)+'" target="_blank" rel="noopener">'+ic('link')+esc(s.link.replace('https://',''))+'</a></div></div>'
     +'<div class="aud">'+ic('target')+'<span>الفئة المستهدفة: '+esc(s.audience)+'</span></div><div class="smets"><div><small>'+ic('phone')+'عدد الأرقام</small><b class="num">'+fmt(s.numbers)+'</b></div><div><small>'+ic('click')+'النقرات</small><b class="num">'+fmt(s.clicks)+'</b></div></div></div></section>'}
-  return h+'</div></div>'
+  h+='</div></div>';
+  if(p.smsList&&p.smsList.length){h+='<div class="sec"><h3 class="sec-h">الرسائل النصية حسب البرنامج</h3><section class="card"><div style="overflow-x:auto"><table><thead><tr><th>البرنامج</th><th>نص الرسالة</th><th>الفئة المستهدفة</th><th>عدد الأرقام</th><th>النقرات</th></tr></thead><tbody>'
+    +p.smsList.map(function(s){return '<tr><td><b>'+esc(s.sub||'موهبة 360')+'</b></td><td style="max-width:420px;white-space:pre-line">'+esc(s.text)+(s.link?'<div style="margin-top:4px"><a class="link" href="'+esc(s.link)+'" target="_blank" rel="noopener">'+esc(s.link.replace('https://',''))+'</a></div>':'')+'</td><td>'+esc(s.audience||'—')+'</td><td><b class="num">'+(s.numbers==null?'—':fmt(s.numbers))+'</b></td><td><b class="num">'+(s.clicks==null?'—':fmt(s.clicks))+'</b></td></tr>'}).join('')+'</tbody></table></div></section></div>'}
+  return h
 }
 
 function driveId(u){var m=String(u).match(/\/d\/([\w-]{10,})/)||String(u).match(/[?&]id=([\w-]{10,})/);return m?m[1]:null}
@@ -735,6 +739,7 @@ function buildData(){
       p.fw=(fg||fi.length||fs.length||fk.visits!=null||fk.smsNumbers!=null)?{name:FW,goal:fg,inf:fi,sms:fs,k:fk}:null}
     var cs=rowsFor('content',P);
     var sms=cs.filter(function(c){return c.type==='رسالة نصية'}).pop(),post=cs.filter(function(c){return c.type==='منشور سوشل ميديا'}).pop();
+    p.smsList=key==='m360'?cs.filter(function(c){return c.type==='رسالة نصية'}).map(function(c){return {sub:c.subprogram||'',text:c.text||'',link:firstLink(c.link),audience:c.target_group||'',numbers:c.numbers,clicks:c.clicks}}):null;
     p.sms=sms?{text:sms.text||'',link:firstLink(sms.link),audience:sms.target_group||'',numbers:sms.numbers,clicks:sms.clicks}:null;
     p.post=post?{text:post.text||'',link:firstLink(post.link),impressions:post.impressions,clicks:post.clicks,engagement:post.engagement,media:post.media||'',art:p.tagline}:null;
     out.programs[key]=p;
