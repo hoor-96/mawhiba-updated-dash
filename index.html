@@ -535,7 +535,7 @@ function highlights(p){
   if(p.saved!=null)cards.push(['h-gold','file','فرصة استكمال',fmt(p.saved),'حفظوا نموذج التسجيل ولم يرسلوه بعد']);
   else{var best=null;if(p.daily&&p.daily.type==='daily'){p.daily.values.forEach(function(v,i){if(!best||v>best[0])best=[v,p.daily.dates[i]]})}
     cards.push(['h-gold','sparkle','أفضل يوم تسجيل',best?fmt(best[0]):'—',best?'مسجل في '+dayLabel(best[1]):'يظهر بعد إضافة الأرقام'])}
-  if(k.impressions==null&&k.organic!=null)cards.push(['h-navy','eye','الوصول العضوي',fmt(k.organic),'من جميع المنصات (بدون الترويج المدفوع)']);else cards.push(['h-navy','eye','الرصد الإعلامي',fmt(k.impressions),k.smsNumbers!=null?'و<b>'+fmt(k.smsNumbers)+'</b> رقمًا وصلتهم الرسائل النصية':'يظهر بعد إضافة الأرقام']);
+  if(k.impressions==null&&k.organic!=null)cards.push(['h-navy','eye','الوصول العضوي',fmt(k.organic),'<span style="font-size:11px;opacity:.85">إحصائيات الوصول من حسابات موهبة الرئيسية والمؤثرين</span>']);else cards.push(['h-navy','eye','الرصد الإعلامي',fmt(k.impressions),k.smsNumbers!=null?'و<b>'+fmt(k.smsNumbers)+'</b> رقمًا وصلتهم الرسائل النصية':'يظهر بعد إضافة الأرقام']);
   return '<div class="sec"><h3 class="sec-h">أبرز النقاط</h3><div class="hl">'+cards.map(function(c){return '<div class="hcard '+c[0]+'">'+PATTERN+'<div class="h"><span>'+ic(c[1])+'</span>'+c[2]+'</div><b class="num">'+c[3]+'</b><p>'+c[4]+'</p></div>'}).join('')+'</div></div>'
 }
 function funnel(p){
@@ -554,7 +554,7 @@ function reach(p){
   var ctr=(k.social!=null&&k.digital)?pct(k.social,k.digital).toFixed(2)+'%':null,cr=(reg!=null&&k.pageVisits)?pct(reg,k.pageVisits).toFixed(2)+'%':null;
   var h='<div class="sec"><h3 class="sec-h">الوصول والأداء الرقمي</h3><div class="stats">'
    +stat('الرصد الإعلامي',k.impressions==null?null:fmt(k.impressions),'eye','c-navy')
-   +(k.organic!=null?stat('الوصول العضوي',fmt(k.organic),'users','c-teal'):'')
+   +(k.organic!=null?stat('الوصول العضوي<br><small style="font-size:10.5px;color:var(--muted);font-weight:400">من حسابات موهبة الرئيسية والمؤثرين</small>',fmt(k.organic),'users','c-teal'):'')
    +stat('الترويج الرقمي',k.digital==null?null:fmt(k.digital),'mega','c-purple')
    +stat('إجمالي أرقام الرسائل النصية',k.smsNumbers==null?null:fmt(k.smsNumbers),'phone','c-navy')
    +stat('عدد الرسائل النصية',k.smsCount==null?null:fmt(k.smsCount),'mail','c-purple')
