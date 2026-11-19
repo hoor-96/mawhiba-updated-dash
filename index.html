@@ -483,7 +483,7 @@ function progressCard(p,t){
    +'<div><div class="big"><b class="num">'+fmt(reg)+'</b><span>مسجل من أصل '+fmt(p.target)+'</span></div>'
    +(reg!=null&&!t.closed&&p.delta?'<div class="dlt">'+ic('trend')+'<span><b class="num">+'+fmt(p.delta.day)+'</b> في '+dayLabel(p.delta.date)+'</span>'+(p.delta.week!=null?'<i></i><span><b class="num">+'+fmt(p.delta.week)+'</b> آخر 7 أيام</span>':'')+'</div>':'')
    +(reg==null?'':'<span class="badge'+(ahead?'':' behind')+'">'+ic('trend')+badgeTxt+'</span>');
-  (p.tiers||[]).forEach(function(s){var sh=reg?pct(s[1]||0,reg):0;h+='<div class="minibar"><div class="r"><span>'+s[0]+' <small>'+(s[2]?'شخص':(reg?sh.toFixed(1)+'% من المسجلين':''))+'</small></span><b class="num">'+fmt(s[1])+'</b></div><div class="t"><i style="width:'+Math.min(100,sh)+'%"></i></div></div>'});
+  (p.tiers||[]).forEach(function(s){var sh=reg?pct(s[1]||0,reg):0;h+='<div class="minibar"><div class="r"><span>'+s[0]+' <small>'+(s[2]?'':(reg?sh.toFixed(1)+'% من المسجلين':''))+'</small></span><b class="num">'+fmt(s[1])+'</b></div><div class="t"><i style="width:'+Math.min(100,sh)+'%"></i></div></div>'});
   (p.split||[]).forEach(function(s){var w=Math.min(100,pct(s[1],s[2]));h+='<div class="minibar"><div class="r"><span>'+s[0]+' <small>متبقٍ '+fmt(Math.max(0,s[2]-s[1]))+'</small></span><b class="num">'+fmt(s[1])+' / '+fmt(s[2])+'</b></div><div class="t"><i style="width:'+w+'%"></i></div></div>'});
   h+='</div></div><div class="tiles">'
    +'<div class="tile"><div><div class="l">المستهدف اليومي العام للحملة</div><b class="num">'+fmt(daily)+'</b></div><span class="ic">'+ic('cal')+'</span></div>'
