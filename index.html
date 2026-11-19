@@ -483,6 +483,7 @@ function progressCard(p,t){
    +'<div><div class="big"><b class="num">'+fmt(reg)+'</b><span>مسجل من أصل '+fmt(p.target)+'</span></div>'
    +(reg!=null&&!t.closed&&p.delta?'<div class="dlt">'+ic('trend')+'<span><b class="num">+'+fmt(p.delta.day)+'</b> في '+dayLabel(p.delta.date)+'</span>'+(p.delta.week!=null?'<i></i><span><b class="num">+'+fmt(p.delta.week)+'</b> آخر 7 أيام</span>':'')+'</div>':'')
    +(reg==null?'':'<span class="badge'+(ahead?'':' behind')+'">'+ic('trend')+badgeTxt+'</span>');
+  (p.tiers||[]).forEach(function(s){var sh=reg?pct(s[1]||0,reg):0;h+='<div class="minibar"><div class="r"><span>'+s[0]+' <small>'+(reg?sh.toFixed(1)+'% من المسجلين':'')+'</small></span><b class="num">'+fmt(s[1])+'</b></div><div class="t"><i style="width:'+Math.min(100,sh)+'%"></i></div></div>'});
   (p.split||[]).forEach(function(s){var w=Math.min(100,pct(s[1],s[2]));h+='<div class="minibar"><div class="r"><span>'+s[0]+' <small>متبقٍ '+fmt(Math.max(0,s[2]-s[1]))+'</small></span><b class="num">'+fmt(s[1])+' / '+fmt(s[2])+'</b></div><div class="t"><i style="width:'+w+'%"></i></div></div>'});
   h+='</div></div><div class="tiles">'
    +'<div class="tile"><div><div class="l">المستهدف اليومي العام للحملة</div><b class="num">'+fmt(daily)+'</b></div><span class="ic">'+ic('cal')+'</span></div>'
@@ -705,6 +706,7 @@ function buildData(){
     var p={tab:P,icon:ICON_OF[key],name:r.program_name||P,tagline:r.tagline||'',open:r.open_date||'',close:r.close_date||'',
       target:r.target_total,registered:r.registered_total==null?null:r.registered_total};
     if(r.target_mawhiba!=null||r.target_external!=null)p.split=[['من طلبة موهبة',r.registered_mawhiba,r.target_mawhiba],['من خارج موهبة',r.registered_external,r.target_external]];
+    if(r.registered_free!=null||r.registered_paid!=null)p.tiers=[['المجاني',r.registered_free],['المدفوع',r.registered_paid]];
     p.kpi={impressions:r.impressions,digital:r.digital_promo,smsNumbers:r.sms_numbers,smsCount:r.sms_count,clicks:r.link_clicks,social:r.social_clicks,pageVisits:r.page_visits,organic:r.organic_reach==null?null:r.organic_reach};
     ['impressions','digital','smsNumbers','smsCount','clicks','social','pageVisits'].forEach(function(k){if(p.kpi[k]===undefined)p.kpi[k]=null});
     p.regStats=REG_DEFS.filter(function(d){return r[d[1]]!=null}).map(function(d){return [d[0],r[d[1]],d[2],d[3]]});
