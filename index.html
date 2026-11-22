@@ -557,7 +557,7 @@ function reach(p){
    +stat('الرصد الإعلامي',k.impressions==null?null:fmt(k.impressions),'eye','c-navy')
    +(k.organic!=null?stat('الوصول العضوي<br><small style="font-size:10.5px;color:var(--muted);font-weight:400">من حسابات موهبة الرئيسية والمؤثرين</small>',fmt(k.organic),'users','c-teal'):'')
    +stat('الترويج الرقمي',k.digital==null?null:fmt(k.digital),'mega','c-purple')
-   +(cur==='m360'?'':stat('إجمالي أرقام الرسائل النصية',k.smsNumbers==null?null:fmt(k.smsNumbers),'phone','c-navy')
+   +((cur==='m360'&&k.smsNumbers==null)?stat('عدد الرسائل النصية',k.smsCount==null?null:fmt(k.smsCount),'mail','c-purple'):stat('إجمالي أرقام الرسائل النصية',k.smsNumbers==null?null:fmt(k.smsNumbers),'phone','c-navy')
    +stat('عدد الرسائل النصية',k.smsCount==null?null:fmt(k.smsCount),'mail','c-purple'))
    +stat('إجمالي النقرات على جميع الروابط',k.clicks==null?null:fmt(k.clicks),'click','c-teal')
    +stat('نقرات السوشل ميديا',k.social==null?null:fmt(k.social),'msg','c-purple')
