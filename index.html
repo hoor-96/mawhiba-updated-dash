@@ -509,7 +509,7 @@ function goalPeriod(s,p){
 function goals(p){
   if(!p.goalsKpi)return '';
   var today=new Date();today.setHours(0,0,0,0);
-  var tot=sum(p.goalsPrograms.map(function(r){return r[3]})),totA=sum(p.goalsPrograms.map(function(r){return r[4]})),anyA=p.goalsPrograms.some(function(r){return r[4]!=null});
+  var mainP=p.goalsPrograms.filter(function(r){return !r[5]});var tot=sum(mainP.map(function(r){return r[3]})),totA=sum(mainP.map(function(r){return r[4]})),anyA=mainP.some(function(r){return r[4]!=null});
   function chip(t,bg,fg){return '<span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap;background:'+bg+';color:'+fg+'">'+t+'</span>'}
   function status(r){
     var pr=goalPeriod(r[2],p);if(!pr)return chip('—','#F2F2F2','#6B6A7D');
@@ -525,7 +525,7 @@ function goals(p){
   return '<div class="sec"><h3 class="sec-h">أهداف الحملة</h3><section class="card"><div class="ctitle"><span class="ic">'+ic('target')+'</span>مؤشرات الأداء المستهدفة</div>'
    +'<div class="kgoal">'+p.goalsKpi.map(function(g){return '<div><h5>'+g[0]+'</h5><b class="num">'+g[1]+'</b> <span class="sub" style="font-size:11.5px">المستهدف · لم يُقس بعد</span><small>'+esc(g[2])+'</small></div>'}).join('')+'</div>'
    +'<div class="ctitle"><span class="ic">'+ic('flag')+'</span>البرامج المستهدفة ومستهدف التسجيل</div><div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>البرنامج</th><th>الفئة المستهدفة</th><th>فترة التسجيل</th><th>المستهدف</th><th>المسجلون</th><th>الإنجاز</th><th>الحالة</th></tr></thead><tbody>'
-   +p.goalsPrograms.map(function(r){return '<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td><b class="num">'+fmt(r[3])+'</b></td><td>'+(r[4]==null?'<span style="color:var(--muted)">—</span>':'<b class="num">'+fmt(r[4])+'</b>')+'</td><td>'+ach(r[4],r[3])+'</td><td>'+status(r)+'</td></tr>'}).join('')
+   +p.goalsPrograms.map(function(r){if(r[5])return '<tr style="background:#FAF9FE;font-size:12.5px"><td style="padding-right:28px;color:var(--muted)">↳ '+esc(r[0])+'</td><td></td><td></td><td><b class="num">'+fmt(r[3])+'</b></td><td>'+(r[4]==null?'—':'<b class="num">'+fmt(r[4])+'</b>')+'</td><td>'+ach(r[4],r[3])+'</td><td></td></tr>';return '<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td><b class="num">'+fmt(r[3])+'</b></td><td>'+(r[4]==null?'<span style="color:var(--muted)">—</span>':'<b class="num">'+fmt(r[4])+'</b>')+'</td><td>'+ach(r[4],r[3])+'</td><td>'+status(r)+'</td></tr>'}).join('')
    +'<tr><td><b>الإجمالي</b></td><td></td><td></td><td><b class="num">'+fmt(tot)+'</b></td><td>'+(anyA?'<b class="num">'+fmt(totA)+'</b>':'—')+'</td><td>'+(anyA?ach(totA,tot):'')+'</td><td></td></tr></tbody></table></div></section></div>'
 }
 function highlights(p){
@@ -731,7 +731,7 @@ function buildData(){
     var gl=rowsFor('goals',P);
     if(gl.length){
       p.goalsKpi=gl.filter(function(g){return g.kind==='مؤشر أداء'}).map(function(g){return [g.item,g.target||'—',g.method||'']});
-      p.goalsPrograms=gl.filter(function(g){return g.kind!=='مؤشر أداء'}).map(function(g){var n=Number(String(g.target||'').replace(/,/g,''));var a=Number(String(g.actual==null?'':g.actual).replace(/,/g,''));return [g.item,g.target_group||'',g.period||'',isNaN(n)?null:n,(g.actual==null||String(g.actual).trim()===''||isNaN(a))?null:a]});
+      p.goalsPrograms=gl.filter(function(g){return g.kind!=='مؤشر أداء'}).map(function(g){var n=Number(String(g.target||'').replace(/,/g,''));var a=Number(String(g.actual==null?'':g.actual).replace(/,/g,''));return [g.item,g.target_group||'',g.period||'',isNaN(n)?null:n,(g.actual==null||String(g.actual).trim()===''||isNaN(a))?null:a,g.kind==='فرعي']});
     }
     if(key==='m360'){var FW='Fitzwilliam College Online Program',fg=null;
       if(p.goalsPrograms){var gi=-1;p.goalsPrograms.forEach(function(r,i){if(r[0]===FW)gi=i});if(gi>=0){fg=p.goalsPrograms[gi];p.goalsPrograms.splice(gi,1)}}
